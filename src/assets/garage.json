@@ -1,0 +1,29 @@
+[
+  {
+    "id": 1,
+    "name": "",
+    "img": "./asset/img/wheel-three.png",
+    "model": "./asset/model/wheel-tree.glb",
+    "price": 100,
+    "speed": 5,
+    "control": 1,
+    "friction": 1,
+    "mass": 1,
+    "position": [0,0,0]
+  },
+  {
+    "id": 2,
+    "name": "",
+    "img": "./asset/img/wheel-three.png",
+    "model": "./asset/model/wheel_1.glb",
+    "price": 100,
+    "speed": 12,
+    "control": 50,
+    "friction": 0.1,
+    "mass": 1,
+    "position": [0,3,0]
+
+  }
+
+
+]

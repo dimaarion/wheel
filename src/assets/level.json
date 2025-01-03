@@ -1,0 +1,11 @@
+[
+  {
+    "level": 1,
+    "name": "",
+    "model": "./asset/model/hest.glb",
+    "position": [0,0,0],
+    "playerPosition": [0,4,0],
+    "scaleLevel": 0.3,
+    "scalePlayer": 0.3
+  }
+]
