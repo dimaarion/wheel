@@ -102,7 +102,7 @@ if(velocity.y < -20){
             </group>
 
 
-            <BallCollider args={[2, 2, 2]} sensor={true} onIntersectionEnter={(e) => {
+            <BallCollider args={[1, 1, 1]} sensor={true} onIntersectionEnter={(e) => {
 
 
             }}/>

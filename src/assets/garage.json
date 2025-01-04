@@ -9,7 +9,7 @@
     "control": 1,
     "friction": 1,
     "mass": 1,
-    "position": [0,0,0]
+    "position": [0,4,0]
   },
   {
     "id": 2,

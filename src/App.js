@@ -11,7 +11,7 @@ import {
 
 import * as THREE from "three";
 import Platform from "./components/Platform";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import Pause from "./components/Pause";
 import StartGame from "./components/StartGame";
 import TopPanel from "./components/TopPanel";
@@ -23,6 +23,7 @@ import level from "./assets/level.json"
 import {Physics} from '@react-three/rapier'
 import Wheel from "./components/Wheel";
 import {get, set, setPrefix} from "lockr";
+import {updateGarage} from "./reduser/garage";
 
 
 
@@ -33,8 +34,9 @@ export default function App() {
     const music = useSelector((state) => state.music.value);
     const garageOpen = useSelector((state) => state.garageOpen.value);
     const pauseOpen = useSelector((state) => state.pauseOpen.value);
-    const selectGarage = useSelector((state) => state.garage.value);
+    const selectGarages = useSelector((state) => state.garage.value);
     const sound = useRef();
+    const dispatch = useDispatch();
 
     const Background = () => {
         const {scene} = useThree();
@@ -91,11 +93,12 @@ export default function App() {
     if (!get("lockr_levels")) {
         set("lockr_levels", level)
     }
-    if (!get("lockr_garage")) {
-        set("lockr_garage", garage)
+    if (!get("garages")) {
+        set("garages", garage)
     }
-console.log(selectGarage)
 
+
+console.log(selectGarages)
     return (
         <>
 
@@ -108,7 +111,8 @@ console.log(selectGarage)
 
             <StartGame>
                 <Canvas shadows camera={{fov: 45}}>
-                    <Environment background={true}  path={"./asset/texture/"} files={"hilly_terrain_01_puresky_1k.hdr"} ground={{scale:200,radius:5000,height:100}}/>
+                    <Environment background={true} path={"./asset/texture/"} files={"hilly_terrain_01_puresky_1k.hdr"}
+                                  ground={{scale: 200, radius: 5000, height: 100}}/>
                     <KeyboardControls map={keyboardMap}>
 
                         <Physics debug={true} gravity={[0, -20, 0]} paused={pause}>
@@ -118,7 +122,7 @@ console.log(selectGarage)
                                 url={el.model}
                                 position={el.position}
                                 actionsArray={el.animations}/>)}
-                            {selectGarage.filter((el) => el.id === 1 && !restart).map((el) => <Wheel url={el.model}
+                            {get("lockr_garages").filter((el) => el.id === 1 && !restart).map((el) => <Wheel url={el.model}
                                                                                                position={el.position}
                                                                                                key={el.id}
                                                                                                friction={el.friction}

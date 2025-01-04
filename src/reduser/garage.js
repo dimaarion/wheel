@@ -2,15 +2,18 @@ import { createSlice } from '@reduxjs/toolkit'
 import {get, set} from "lockr";
 
 
+
+
+
 export const garage = createSlice({
     name: 'garage',
     initialState: {
-        value: get("lockr_garage"),
+        value: get("lockr_garages"),
     },
     reducers: {
         updateGarage: (state,action) => {
             state.value = action.payload;
-            set("lockr_garage",action.payload)
+            set("lockr_garages",state.value)
         },
 
 
