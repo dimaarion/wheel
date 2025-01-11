@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
+import gar from "../assets/garage.json"
 import {get, set} from "lockr";
 
 

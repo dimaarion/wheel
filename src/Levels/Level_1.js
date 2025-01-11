@@ -73,24 +73,19 @@ export default function Level_1(props) {
                 </group>
             </RigidBody>
 
-            <RigidBody name={"point"} colliders={"trimesh"} type={"fixed"} >
-                <group>
-                    <primitive object={nodes.point}/>
-                </group>
+            <RigidBody sensor={true} type={"fixed"} onIntersectionExit={(e) => {
+                // e.target.rigidBodyObject.children[0]?.material?.color.set('blue');
+            }
+            } onIntersectionEnter={(e) => {
 
-            </RigidBody>
-            <RigidBody name={"point"} colliders={"trimesh"} type={"fixed"} >
-                <group>
-                    <primitive object={nodes.point_1}/>
-                </group>
+                // e.target.rigidBodyObject.children[0]?.material?.color.set('green');
+                dispatch(updateGarage(savePositions(e)))
 
+            }}>
+                <primitive object={nodes.save_0}/>
             </RigidBody>
-            <RigidBody name={"point"} colliders={"trimesh"} type={"fixed"}>
-                <group>
-                    <primitive object={nodes.point_2}/>
-                </group>
 
-            </RigidBody>
+
             <RigidBody sensor={true} type={"fixed"} onIntersectionExit={(e) => {
                // e.target.rigidBodyObject.children[0]?.material?.color.set('blue');
             }
