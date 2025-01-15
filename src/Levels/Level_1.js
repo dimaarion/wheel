@@ -70,6 +70,7 @@ export default function Level_1(props) {
             <RigidBody colliders="trimesh" type="fixed">
                 <group>
                     <primitive object={nodes.platform}/>
+                    <primitive object={nodes.point}/>
                 </group>
             </RigidBody>
 
@@ -108,11 +109,24 @@ export default function Level_1(props) {
             }}>
                 <primitive object={nodes.save_2}/>
             </RigidBody>
-            <group>
-
-                {/*<primitive object={nodes.Landscape}/>*/}
-
-            </group>
+            <RigidBody  colliders={"cuboid"}>
+                <primitive object={nodes.block}/>
+            </RigidBody>
+            <RigidBody  colliders={"cuboid"}>
+                <primitive object={nodes.block1}/>
+            </RigidBody>
+            <RigidBody  colliders={"cuboid"}>
+                <primitive object={nodes.block2}/>
+            </RigidBody>
+            <RigidBody  colliders={"cuboid"}>
+                <primitive object={nodes.block3}/>
+            </RigidBody>
+            <RigidBody  colliders={"cuboid"}>
+                <primitive object={nodes.block4}/>
+            </RigidBody>
+            <RigidBody  colliders={"ball"}>
+                    <primitive object={nodes.block5}/>
+            </RigidBody>
 
 
         </group>

@@ -93,12 +93,12 @@ export default function App() {
     if (!get("lockr_levels")) {
         set("lockr_levels", level)
     }
-    if (!get("garages")) {
+    if (get("garages")) {
         set("garages", garage)
     }
+  // dispatch(updateGarage(garage))
 
 
-console.log(selectGarages)
     return (
         <>
 
@@ -115,7 +115,7 @@ console.log(selectGarages)
                                   ground={{scale: 200, radius: 5000, height: 100}}/>
                     <KeyboardControls map={keyboardMap}>
 
-                        <Physics debug={true} gravity={[0, -20, 0]} paused={pause}>
+                        <Physics debug={false} gravity={[0, -20, 0]} paused={pause}>
                             {get("lockr_levels").filter((el) => el.level === 1).map((el) => <Platform
                                 key={el.level + "platform"}
                                 level={el.level}

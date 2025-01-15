@@ -90,6 +90,7 @@ if(velocity.y < -20){
 
     return <>
         <Controller
+
                     position={props.position}
                   //  floatHeight={0.1}
                   //  capsuleRadius={0.1}
