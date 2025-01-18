@@ -96,7 +96,10 @@ export default function App() {
     if (get("garages")) {
         set("garages", garage)
     }
-  // dispatch(updateGarage(garage))
+    if (!get("lockr_garages")) {
+        dispatch(updateGarage(garage))
+    }
+
 
 
     return (
