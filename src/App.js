@@ -16,7 +16,7 @@ import Pause from "./components/Pause";
 import StartGame from "./components/StartGame";
 import TopPanel from "./components/TopPanel";
 import Settings from "./components/Settings";
-import {useEffect, useRef} from "react";
+import {useEffect, useRef, useState} from "react";
 import Garage from "./components/Garage";
 import garage from "./assets/garage.json"
 import level from "./assets/level.json"
@@ -24,10 +24,13 @@ import {Physics} from '@react-three/rapier'
 import Wheel from "./components/Wheel";
 import {get, set, setPrefix} from "lockr";
 import {updateGarage} from "./reduser/garage";
-
+import db from "./assets/db.json";
+import Database from "./components/Database";
+import {openWindow,savePositions} from "./actions";
 
 
 export default function App() {
+    const database = new Database();
     const restart = useSelector((state) => state.restart.value);
     const settings = useSelector((state) => state.settings.value);
     const pause = useSelector((state) => state.pause.value);
@@ -35,8 +38,10 @@ export default function App() {
     const garageOpen = useSelector((state) => state.garageOpen.value);
     const pauseOpen = useSelector((state) => state.pauseOpen.value);
     const selectGarages = useSelector((state) => state.garage.value);
+
     const sound = useRef();
     const dispatch = useDispatch();
+
 
     const Background = () => {
         const {scene} = useThree();
@@ -72,35 +77,25 @@ export default function App() {
     ];
 
     useEffect(() => {
-        const handleVisibilityChange = () => {
-            if (document.hidden) {
-                sound.current?.pause(); // Остановить звук, если вкладка невидима
-            } else {
-                sound.current?.play(); // Воспроизвести звук, если вкладка активна
-            }
-        };
-
-        // Слушаем изменения видимости страницы
-        document.addEventListener("visibilitychange", handleVisibilityChange);
-
-        return () => {
-            document.removeEventListener("visibilitychange", handleVisibilityChange);
-        };
-
-
+        openWindow(sound);
     }, []);
-    setPrefix("lockr_")
-    if (!get("lockr_levels")) {
-        set("lockr_levels", level)
-    }
-    if (get("garages")) {
-        set("garages", garage)
-    }
-    if (!get("lockr_garages")) {
-        dispatch(updateGarage(garage))
-    }
+
+    useEffect(() => {
+        if (pause) {
+            sound.current?.pause();
+        } else {
+            sound.current?.play();
+        }
+    }, [pause])
 
 
+
+   database.create(db);
+
+    useEffect(()=>{
+     //  dispatch(updateGarage(savePositions(undefined,database,1)));
+
+    },[pause])
 
     return (
         <>
@@ -115,23 +110,24 @@ export default function App() {
             <StartGame>
                 <Canvas shadows camera={{fov: 45}}>
                     <Environment background={true} path={"./asset/texture/"} files={"hilly_terrain_01_puresky_1k.hdr"}
-                                  ground={{scale: 200, radius: 5000, height: 100}}/>
+                                 ground={{scale: 200, radius: 5000, height: 100}}/>
                     <KeyboardControls map={keyboardMap}>
 
                         <Physics debug={false} gravity={[0, -20, 0]} paused={pause}>
-                            {get("lockr_levels").filter((el) => el.level === 1).map((el) => <Platform
+                            {database.getLevel().filter((el) => el.level === 1).map((el) => <Platform
                                 key={el.level + "platform"}
                                 level={el.level}
                                 url={el.model}
                                 position={el.position}
                                 actionsArray={el.animations}/>)}
-                            {get("lockr_garages").filter((el) => el.id === 1 && !restart).map((el) => <Wheel url={el.model}
-                                                                                               position={el.position}
-                                                                                               key={el.id}
-                                                                                               friction={el.friction}
-                                                                                               mass={el.mass}
-                                                                                               control={el.control}
-                                                                                               speed={el.speed}/>)}
+                            {selectGarages.filter((el) => el.id === 1 && !restart).map((el) => <Wheel
+                                url={el.model}
+                                position={el.position}
+                                key={el.id}
+                                friction={el.friction}
+                                mass={el.mass}
+                                control={el.control}
+                                speed={el.speed}/>)}
 
 
                         </Physics>
@@ -142,7 +138,7 @@ export default function App() {
                             autoplay={true}
                             loop={false}
                             url="./asset/sound/y2mate.com - Dmitriy Lukyanov_Underwater.mp3"
-                            distance={music}
+                            distance={database.getMusic()}
                         />
                     </KeyboardControls>
 

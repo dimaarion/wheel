@@ -1,20 +1,20 @@
 import { createSlice } from '@reduxjs/toolkit'
 import gar from "../assets/garage.json"
 import {get, set} from "lockr";
+import Database from "../components/Database";
 
-
+const database = new Database();
 
 
 
 export const garage = createSlice({
     name: 'garage',
     initialState: {
-        value: get("lockr_garages"),
+        value: database.db.player,
     },
     reducers: {
         updateGarage: (state,action) => {
             state.value = action.payload;
-            set("lockr_garages",state.value)
         },
 
 

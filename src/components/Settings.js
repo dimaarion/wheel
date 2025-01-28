@@ -1,13 +1,13 @@
 import {useDispatch, useSelector} from "react-redux";
 import {updateMusic} from "../reduser/music";
 import {useEffect, useState} from "react";
-import {db} from "./Database";
 import {getSound} from "../reduser/sound";
 import CloseBtn from "./CloseBtn";
 import {decrementSettings, incrementSettings} from "../reduser/settingsOpen";
 import {decrementPause, incrementPause} from "../reduser/pause";
 import {updateResize} from "../reduser/resize";
 import {get,set,setPrefix} from "lockr";
+import Database from "./Database";
 
 
 export default function Settings() {
@@ -16,11 +16,9 @@ export default function Settings() {
     const selectSound = useSelector((state) => state.sound.value);
     const selectResize = useSelector((state) => state.resize.value);
     const [over, setOver] = useState({play: "#FF803F", border: "#00CAC9"});
+    const database = new Database();
 
-    setPrefix("lockr_")
-useEffect(()=>{
-    dispatch(updateMusic(get('lockr_music')))
-},[])
+
 
 
     return <>
@@ -93,17 +91,15 @@ useEffect(()=>{
                 </g>
             </svg>
 
-            <input type={"range"} id="sound" min={0} max={100}  defaultValue={get("lockr_sound")}
+            <input type={"range"} id="sound" min={0} max={100}  defaultValue={database.db.effect}
                    onChange={(e)=> {
-                       set('sound', e.target.value);
-                       dispatch(getSound(e.target.value))
+                       dispatch(getSound(e.target.value));
                    }}
                    className="absolute top-[110px] left-[130px] w-[220px] bg-orange appearance-none h-1 border-2 border-aqua cursor-pointer range"/>
 
-            <input type={"range"} min={0} max={100} defaultValue={get('lockr_music')}
+            <input type={"range"} min={0} max={100} defaultValue={database.db.music}
                    onChange={(e) => {
-                       set('music', e.target.value);
-                       dispatch(updateMusic(e.target.value))
+                       dispatch(updateMusic(e.target.value));
                    }}
                    className="absolute top-[175px] left-[130px] w-[220px] bg-orange appearance-none h-1 border-2 border-aqua cursor-pointer range"/>
 

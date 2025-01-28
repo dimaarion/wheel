@@ -1,8 +1,8 @@
-import {Box, Cylinder, Gltf, useAnimations, useGLTF, useKeyboardControls} from "@react-three/drei";
+import {Box, Cylinder, Gltf, PositionalAudio, useAnimations, useGLTF, useKeyboardControls} from "@react-three/drei";
 import {useEffect, useRef, useState} from "react";
 import {useFrame} from "@react-three/fiber";
 import {Vector3} from "three";
-import {routable} from "../actions";
+import {openWindow, routable, saveHit} from "../actions";
 import {BallCollider, RigidBody, useRevoluteJoint} from "@react-three/rapier";
 import * as THREE from "three";
 import Controller from "ecctrl";
@@ -10,22 +10,33 @@ import {get, set} from "lockr"
 import {useDispatch, useSelector} from "react-redux";
 import {decrementPause, incrementPause} from "../reduser/pause";
 import {incrementPauseOpen} from "../reduser/pauseOpen";
+import Database from "./Database";
 
 
 export default function Gear(props) {
 
     const [, get] = useKeyboardControls();
     const carRef = useRef();
+    const sound = useRef();
+    const hit = useRef();
     const {nodes, materials, animations} = useGLTF('./asset/model/wheel-tree.glb');
     const restart = useSelector((state) => state.restart.value);
-//console.log(nodes)
+    const pause = useSelector((state) => state.pause.value);
+    const selectSound = useSelector((state) => state.sound.value);
+    const [collidePlatform, setCollidePlatform] = useState("");
+
     const speed = props.speed;
     const turnSpeed = props.control;
     const dispatch = useDispatch();
+    const database = new Database();
 
+
+    function play(){
+        sound.current?.play();
+    }
 
     useFrame((state, delta) => {
-        if(!carRef.current){
+        if (!carRef.current) {
             return
         }
         const {forward, backward, leftward, rightward} = get();
@@ -51,8 +62,12 @@ export default function Gear(props) {
         let forwardVelocity = 0;
         if (forward) {
             forwardVelocity = speed;
+            play();
         } else if (backward) {
             forwardVelocity = -speed;
+            play();
+        }else {
+            sound.current?.pause();
         }
 
         // Apply forward/backward movement
@@ -72,33 +87,65 @@ export default function Gear(props) {
             y: angularVelocity,
             z: forwardVelocity * forwardVector.z
         });
-if(velocity.y < -20){
-    dispatch(incrementPause())
-    dispatch(incrementPauseOpen())
-    carRef.current?.setAngvel({
-        x: 0,
-        y: 0,
-        z: 0
-    });
 
-}
 
+
+        if (velocity.y < -20) {
+            dispatch(incrementPause())
+            dispatch(incrementPauseOpen())
+            carRef.current?.setAngvel({
+                x: 0,
+                y: 0,
+                z: 0
+            });
+
+        }
 
 
     })
 
+    useEffect(() => {
+        openWindow(sound);
+    }, []);
 
+    useEffect(() => {
+        if (pause) {
+            sound.current?.pause();
+        }
+    }, [pause])
     return <>
         <Controller
 
-                    position={props.position}
-                  //  floatHeight={0.1}
-                  //  capsuleRadius={0.1}
-                    name={"player"}
-                    camInitDir={{x: routable(20), y: routable(90)}}
-                    friction={props.friction} disableControl={true} turnSpeed={1} camInitDis={-20} colliders={"hull"}
-                    ref={carRef} type={"dynamic"} mass={props.mass}>
-            <group     rotation={[routable(0), 0, 0]}>
+            position={props.position}
+            //  floatHeight={0.1}
+            //  capsuleRadius={0.1}
+            name={"player"}
+            camInitDir={{x: routable(20), y: routable(90)}}
+            friction={props?.friction}
+            disableControl={true}
+            camInitDis={-20}
+            colliders={"hull"}
+            ref={carRef}
+            type={"dynamic"}
+            mass={props.mass}
+            onIntersectionExit={(e)=>{
+                setCollidePlatform("");
+            }}
+            onIntersectionEnter={(e) => {
+                switch (e.rigidBodyObject.name) {
+                    case "block":
+                        hit.current?.play();
+                        saveHit(database,props?.level)
+                        break
+                    default:
+                        hit.current?.pause();
+                }
+                setCollidePlatform(e.rigidBodyObject.name);
+
+            }}
+        >
+
+            <group rotation={[routable(0), 0, 0]}>
                 <mesh geometry={nodes.wheel.geometry}/>
             </group>
 
@@ -108,6 +155,19 @@ if(velocity.y < -20){
 
             }}/>
         </Controller>
-
+        <PositionalAudio
+            ref={sound}
+            autoplay={false}
+            loop={false}
+            url="./asset/sound/wheel.mp3"
+            distance={selectSound}
+        />
+        <PositionalAudio
+            ref={hit}
+            autoplay={false}
+            loop={false}
+            url="./asset/sound/korotkiy-gluhoy-metallicheskiy-stuk.mp3"
+            distance={selectSound}
+        />
     </>
 }

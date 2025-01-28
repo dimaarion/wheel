@@ -4,6 +4,8 @@ import {useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
 import {useFrame} from "@react-three/fiber";
 import {updateGarage} from "../reduser/garage";
+import Database from "../components/Database";
+import {savePositions} from "../actions";
 
 
 export default function Level_1(props) {
@@ -14,6 +16,8 @@ export default function Level_1(props) {
     const selectGarage = useSelector((state) => state.garage.value);
     const [point, setPoint] = useState("blue");
     const dispatch = useDispatch();
+    const database = new Database();
+
 
     const block = useRef();
     useEffect(() => {
@@ -55,77 +59,52 @@ export default function Level_1(props) {
         })
     })
 
-    function savePositions(e) {
-        return selectGarage.map(obj =>
-            obj.id === 1 ? {
-                ...obj,
-                position: [e.rigidBodyObject.position.x, e.rigidBodyObject.position.y, e.rigidBodyObject.position.z]
-            } : obj
-        );
-    }
+    const savePoint = [nodes.save_0, nodes.save_1, nodes.save_2]
 
 
     return <>
         <group ref={ref} position={props.position} scale={0.5}>
-            <RigidBody colliders="trimesh" type="fixed">
+            <RigidBody  name={"platform"} colliders="trimesh" type="fixed">
                 <group>
-                    <primitive object={nodes.platform}/>
+                    <primitive name={"platform"} object={nodes.platform}/>
                     <primitive object={nodes.point}/>
                 </group>
             </RigidBody>
 
-            <RigidBody sensor={true} type={"fixed"} onIntersectionExit={(e) => {
-                // e.target.rigidBodyObject.children[0]?.material?.color.set('blue');
-            }
-            } onIntersectionEnter={(e) => {
+            {savePoint.map((el, i) => <RigidBody
+                key={i + "_save"}
+                sensor={true}
+                type={"fixed"}
+                name={"save"}
+                onIntersectionExit={(e) => {
+                    // e.target.rigidBodyObject.children[0]?.material?.color.set('blue');
+                }}
+                onIntersectionEnter={(e) => {
 
-                // e.target.rigidBodyObject.children[0]?.material?.color.set('green');
-                dispatch(updateGarage(savePositions(e)))
+                    if(e.rigidBodyObject.name === "player"){
+                        dispatch(updateGarage(savePositions(e,database,props?.level)));
+                    }
 
-            }}>
-                <primitive object={nodes.save_0}/>
-            </RigidBody>
-
-
-            <RigidBody sensor={true} type={"fixed"} onIntersectionExit={(e) => {
-               // e.target.rigidBodyObject.children[0]?.material?.color.set('blue');
-            }
-            } onIntersectionEnter={(e) => {
-
-               // e.target.rigidBodyObject.children[0]?.material?.color.set('green');
-                dispatch(updateGarage(savePositions(e)))
-
-            }}>
-                <primitive object={nodes.save_1}/>
-            </RigidBody>
-            <RigidBody sensor={true} type={"fixed"} onIntersectionExit={(e) => {
-                // e.target.rigidBodyObject.children[0]?.material?.color.set('blue');
-            }
-            } onIntersectionEnter={(e) => {
-
-                // e.target.rigidBodyObject.children[0]?.material?.color.set('green');
-                dispatch(updateGarage(savePositions(e)))
-
-            }}>
-                <primitive object={nodes.save_2}/>
-            </RigidBody>
-            <RigidBody  colliders={"cuboid"}>
+                }}>
+                <primitive object={el}/>
+            </RigidBody>)}
+            <RigidBody name={"block"} colliders={"cuboid"}>
                 <primitive object={nodes.block}/>
             </RigidBody>
-            <RigidBody  colliders={"cuboid"}>
+            <RigidBody name={"block"} colliders={"cuboid"}>
                 <primitive object={nodes.block1}/>
             </RigidBody>
-            <RigidBody  colliders={"cuboid"}>
+            <RigidBody name={"block"} colliders={"cuboid"}>
                 <primitive object={nodes.block2}/>
             </RigidBody>
-            <RigidBody  colliders={"cuboid"}>
+            <RigidBody name={"block"} colliders={"cuboid"}>
                 <primitive object={nodes.block3}/>
             </RigidBody>
-            <RigidBody  colliders={"cuboid"}>
+            <RigidBody name={"block"} colliders={"cuboid"}>
                 <primitive object={nodes.block4}/>
             </RigidBody>
-            <RigidBody  colliders={"ball"}>
-                    <primitive object={nodes.block5}/>
+            <RigidBody name={"block"} colliders={"ball"}>
+                <primitive object={nodes.block5}/>
             </RigidBody>
 
 

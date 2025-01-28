@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
-import {db} from "../components/Database";
-
+import Database from "../components/Database";
+const database = new Database();
 
 export const savePosition = createSlice({
     name: 'savePosition',
@@ -9,7 +9,6 @@ export const savePosition = createSlice({
     },
     reducers: {
         incrementSave: (state,action) => {
-            db.friends.update(1013, action.payload)
             state.value = action.payload;
         },
 

@@ -1,15 +1,17 @@
 import { createSlice } from '@reduxjs/toolkit'
-import {get} from "lockr";
+import Database from "../components/Database";
 
+const database = new Database();
 
 export const music = createSlice({
     name: 'music',
     initialState: {
-        value: get("lockr_music"),
+        value: database.db.music,
     },
     reducers: {
         updateMusic: (state,action) => {
             state.value = action.payload;
+            database.setMusic(state.value);
         },
     },
 })

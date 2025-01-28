@@ -1,16 +1,18 @@
 import {createSlice} from '@reduxjs/toolkit'
-import {db} from "../components/Database";
+import Database from "../components/Database";
 
 
+const database = new Database();
 
 export const sound = createSlice({
     name: 'sound',
     initialState: {
-        value: 0,
+        value: database.db.effect,
     },
     reducers: {
         getSound: (state, action) => {
             state.value = action.payload;
+            database.setEffect(state.value);
         }
     },
 })
