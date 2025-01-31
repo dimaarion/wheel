@@ -1,3 +1,4 @@
+import db from "../assets/db.json"
 export default class Database {
     db = {
         music: 50,
@@ -8,19 +9,16 @@ export default class Database {
 
 
     constructor() {
+        if (!JSON.parse(window.localStorage.getItem("wheel_db"))) {
+            this.set(db);
+        }
         this.db = JSON.parse(window.localStorage.getItem("wheel_db"));
+
 
     }
 
     set(obj) {
         window.localStorage.setItem("wheel_db", JSON.stringify(obj));
-    }
-
-
-    create(db) {
-        if (!JSON.parse(window.localStorage.getItem("wheel_db"))) {
-            this.set(db);
-        }
     }
 
     getMusic() {
@@ -49,7 +47,11 @@ export default class Database {
         return this.db.level;
     }
 
-    setLevel(el){
+    getLevelOne(level = 1) {
+        return this.db.level.filter((el)=>el.level === level)[0];
+    }
+
+    setLevel(el) {
         this.db.level = el;
         this.set(this.db);
     }

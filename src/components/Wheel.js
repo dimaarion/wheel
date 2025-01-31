@@ -13,22 +13,23 @@ import {incrementPauseOpen} from "../reduser/pauseOpen";
 import Database from "./Database";
 
 
-export default function Gear(props) {
-
+export default function Wheel(props) {
+    const database = new Database();
     const [, get] = useKeyboardControls();
     const carRef = useRef();
     const sound = useRef();
     const hit = useRef();
-    const {nodes, materials, animations} = useGLTF('./asset/model/wheel-tree.glb');
+    const {nodes, materials, animations} = useGLTF('./asset/model/wheel.glb');
     const restart = useSelector((state) => state.restart.value);
     const pause = useSelector((state) => state.pause.value);
     const selectSound = useSelector((state) => state.sound.value);
     const [collidePlatform, setCollidePlatform] = useState("");
+    const [countHit, setCountHit] = useState(database.getLevelOne(props?.level).hit);
 
     const speed = props.speed;
     const turnSpeed = props.control;
     const dispatch = useDispatch();
-    const database = new Database();
+
 
 
     function play(){
@@ -62,12 +63,10 @@ export default function Gear(props) {
         let forwardVelocity = 0;
         if (forward) {
             forwardVelocity = speed;
-            play();
         } else if (backward) {
             forwardVelocity = -speed;
-            play();
         }else {
-            sound.current?.pause();
+
         }
 
         // Apply forward/backward movement
@@ -113,6 +112,10 @@ export default function Gear(props) {
             sound.current?.pause();
         }
     }, [pause])
+
+    useEffect(()=>{
+        saveHit(database,props?.level,countHit)
+    },[countHit])
     return <>
         <Controller
 
@@ -129,45 +132,37 @@ export default function Gear(props) {
             type={"dynamic"}
             mass={props.mass}
             onIntersectionExit={(e)=>{
-                setCollidePlatform("");
+
             }}
             onIntersectionEnter={(e) => {
                 switch (e.rigidBodyObject.name) {
                     case "block":
                         hit.current?.play();
-                        saveHit(database,props?.level)
+                        setCountHit(countHit + 1)
                         break
                     default:
-                        hit.current?.pause();
+
                 }
-                setCollidePlatform(e.rigidBodyObject.name);
+
 
             }}
         >
-
-            <group rotation={[routable(0), 0, 0]}>
-                <mesh geometry={nodes.wheel.geometry}/>
-            </group>
-
-
-            <BallCollider args={[1, 1, 1]} sensor={true} onIntersectionEnter={(e) => {
-
-
-            }}/>
+                <primitive object={nodes.wheel}/>
+            />
         </Controller>
-        <PositionalAudio
+        {/*<PositionalAudio
             ref={sound}
             autoplay={false}
             loop={false}
             url="./asset/sound/wheel.mp3"
             distance={selectSound}
         />
-        <PositionalAudio
+            <PositionalAudio
             ref={hit}
             autoplay={false}
             loop={false}
             url="./asset/sound/korotkiy-gluhoy-metallicheskiy-stuk.mp3"
             distance={selectSound}
-        />
+            />*/}
     </>
 }

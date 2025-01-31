@@ -42,9 +42,9 @@ export function savePositions(e, database, level = 1) {
 export function saveHit(database, level = 1,count = 0) {
     const o = database.getLevel().map(obj => obj.level === level ? {
             ...obj,
-            hit:count++
+            hit:count
         } : obj
     );
-    console.log(o)
+    database.setLevel(o)
     return o;
 }

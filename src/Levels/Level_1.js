@@ -1,8 +1,8 @@
 import {BallCollider, RigidBody} from "@react-three/rapier";
-import {useAnimations, useGLTF} from "@react-three/drei";
+import {Environment, useAnimations, useGLTF} from "@react-three/drei";
 import {useEffect, useRef, useState} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {useFrame} from "@react-three/fiber";
+import {Canvas, useFrame} from "@react-three/fiber";
 import {updateGarage} from "../reduser/garage";
 import Database from "../components/Database";
 import {savePositions} from "../actions";
@@ -63,6 +63,8 @@ export default function Level_1(props) {
 
 
     return <>
+        <Environment background={true} path={"./asset/texture/"} files={"hilly_terrain_01_puresky_1k.hdr"}
+                     ground={{scale: 200, radius: 5000, height: 100}}/>
         <group ref={ref} position={props.position} scale={0.5}>
             <RigidBody  name={"platform"} colliders="trimesh" type="fixed">
                 <group>
@@ -105,6 +107,9 @@ export default function Level_1(props) {
             </RigidBody>
             <RigidBody name={"block"} colliders={"ball"}>
                 <primitive object={nodes.block5}/>
+            </RigidBody>
+            <RigidBody name={"finish"} sensor={true} type={"fixed"} colliders={"hull"}>
+                <primitive object={nodes.finih}/>
             </RigidBody>
 
 

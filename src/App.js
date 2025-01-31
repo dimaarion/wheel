@@ -90,12 +90,12 @@ export default function App() {
 
 
 
-   database.create(db);
-
     useEffect(()=>{
      //  dispatch(updateGarage(savePositions(undefined,database,1)));
 
     },[pause])
+
+
 
     return (
         <>
@@ -109,10 +109,7 @@ export default function App() {
 
             <StartGame>
                 <Canvas shadows camera={{fov: 45}}>
-                    <Environment background={true} path={"./asset/texture/"} files={"hilly_terrain_01_puresky_1k.hdr"}
-                                 ground={{scale: 200, radius: 5000, height: 100}}/>
                     <KeyboardControls map={keyboardMap}>
-
                         <Physics debug={false} gravity={[0, -20, 0]} paused={pause}>
                             {database.getLevel().filter((el) => el.level === 1).map((el) => <Platform
                                 key={el.level + "platform"}
@@ -121,6 +118,7 @@ export default function App() {
                                 position={el.position}
                                 actionsArray={el.animations}/>)}
                             {selectGarages.filter((el) => el.id === 1 && !restart).map((el) => <Wheel
+                                level={1}
                                 url={el.model}
                                 position={el.position}
                                 key={el.id}
@@ -128,8 +126,6 @@ export default function App() {
                                 mass={el.mass}
                                 control={el.control}
                                 speed={el.speed}/>)}
-
-
                         </Physics>
 
                         <PositionalAudio
@@ -151,7 +147,7 @@ export default function App() {
 useGLTF.preload([
 
     './asset/model/well.glb',
-    './asset/model/wheel-tree.glb',
+    './asset/model/wheel.glb',
     './asset/model/wheel_1.glb',
     './asset/model/hest.glb',
 ]);
